@@ -323,7 +323,7 @@ export default function Home() {
             <p className="invisible font-mono text-xs font-bold uppercase tracking-[0.2em]">
               Mechatronics engineering student
             </p>
-            <div className="boot-sequence__name-frame mt-6 max-w-3xl text-5xl font-black leading-[0.95] tracking-[-0.04em] text-balance sm:text-7xl">
+            <div className="boot-sequence__name-frame mt-6 max-w-3xl text-[3.6rem] font-black leading-[0.95] tracking-[-0.04em] text-balance sm:text-[5.4rem]">
               <span className="boot-sequence__symbols">
                 <span className="boot-sequence__symbol">{"{ }"}</span>
                 <span className="boot-sequence__symbol">{"</>"}</span>
@@ -379,7 +379,7 @@ export default function Home() {
             </p>
             <h1
               aria-label={heroName}
-              className="hero-name--static mt-6 max-w-3xl text-5xl font-black leading-[0.95] tracking-[-0.04em] text-balance text-foreground sm:text-7xl"
+              className="hero-name--static mt-6 max-w-3xl text-[3.6rem] font-black leading-[0.95] tracking-[-0.04em] text-balance text-foreground sm:text-[5.4rem]"
             >
               <HeroNameCharacters />
             </h1>
