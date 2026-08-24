@@ -15,11 +15,14 @@ export function ProjectList({ projects }: { projects: ProjectSummary[] }) {
   }
 
   return (
-    <div className="grid gap-10 sm:grid-cols-2">
+    <div className="columns-1 gap-10 sm:columns-2">
       {projects.map((project) => (
-        <div className="group" key={project.slug}>
+        <div
+          className="group mb-10 inline-block w-full break-inside-avoid"
+          key={project.slug}
+        >
           <Link
-            className="block rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+            className="block overflow-hidden rounded-2xl border border-border bg-background outline-none transition-[border-color,box-shadow] duration-200 hover:border-accent/40 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-4 focus-visible:ring-offset-background"
             href={`/projects/${project.slug}`}
           >
             {project.cover && (
@@ -28,25 +31,17 @@ export function ProjectList({ projects }: { projects: ProjectSummary[] }) {
                 name={`project-cover-${project.slug}`}
                 share="project-cover"
               >
-                <div
-                  className={
-                    project.coverAspect === "9:16"
-                      ? "mx-auto aspect-[9/16] w-full max-w-xs overflow-hidden rounded-2xl outline outline-1 -outline-offset-1 outline-foreground/10 transition-transform duration-200 group-hover:scale-[1.01]"
-                      : "aspect-[16/10] w-full overflow-hidden rounded-2xl outline outline-1 -outline-offset-1 outline-foreground/10 transition-transform duration-200 group-hover:scale-[1.01]"
-                  }
-                >
-                  {/* Project images are authored content with dimensions that vary by project. */}
-                  {/* biome-ignore lint/performance/noImgElement: The fixed frame prevents layout shift while preserving colocated media. */}
-                  <img
-                    alt={project.coverAlt ?? ""}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                    src={projectAssetUrl(project.slug, project.cover)}
-                  />
-                </div>
+                {/* Project images are authored content with dimensions that vary by project. */}
+                {/* biome-ignore lint/performance/noImgElement: Covers may be local or remote authored media. */}
+                <img
+                  alt={project.coverAlt ?? ""}
+                  className="h-auto w-full rounded-2xl outline outline-1 -outline-offset-1 outline-foreground/10 transition-transform duration-200 group-hover:scale-[1.01]"
+                  loading="lazy"
+                  src={projectAssetUrl(project.slug, project.cover)}
+                />
               </ViewTransition>
             )}
-            <div className={project.cover ? "pt-5" : undefined}>
+            <div className="p-6">
               <time className="text-sm text-subtle" dateTime={project.date}>
                 {dateFormatter.format(new Date(project.date))}
               </time>

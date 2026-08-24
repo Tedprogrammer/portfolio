@@ -23,17 +23,6 @@ export default async function ProjectLayout({
           <li className="shrink-0">
             <Link
               className="text-muted transition-colors hover:text-accent"
-              href="/"
-            >
-              Home
-            </Link>
-          </li>
-          <li aria-hidden="true" className="text-subtle">
-            /
-          </li>
-          <li className="shrink-0">
-            <Link
-              className="text-muted transition-colors hover:text-accent"
               href="/#projects"
             >
               Projects

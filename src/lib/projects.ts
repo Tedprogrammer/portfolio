@@ -22,7 +22,6 @@ export type ProjectSummary = {
   date: string;
   cover?: string;
   coverAlt?: string;
-  coverAspect: "16:10" | "9:16";
   hero?: string;
   heroAlt?: string;
 };
@@ -64,20 +63,6 @@ function optionalString(value: unknown, field: string, slug: string) {
   return requiredString(value, field, slug);
 }
 
-function coverAspect(value: unknown, slug: string): "16:10" | "9:16" {
-  if (value === undefined) {
-    return "16:10";
-  }
-
-  if (value !== "16:10" && value !== "9:16") {
-    throw new Error(
-      `Project "${slug}" coverAspect must be either "16:10" or "9:16".`,
-    );
-  }
-
-  return value;
-}
-
 export function getProjectSlugs() {
   if (!fs.existsSync(projectsDirectory)) {
     return [];
@@ -111,7 +96,6 @@ export function getProject(slug: string): Project | null {
     date: projectDate(data.date, slug),
     cover: optionalString(data.cover, "cover", slug),
     coverAlt: optionalString(data.coverAlt, "coverAlt", slug),
-    coverAspect: coverAspect(data.coverAspect, slug),
     hero: optionalString(data.hero, "hero", slug),
     heroAlt: optionalString(data.heroAlt, "heroAlt", slug),
     content,

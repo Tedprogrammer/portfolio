@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef } from "react";
 
-const bootSequenceDuration = 2508;
+const bootSequenceDuration = 2682;
 
 export function HomeBootController() {
   const ownsBootSequence = useRef(false);

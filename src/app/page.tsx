@@ -162,8 +162,8 @@ function HeroNameCharacters({ animated = false }: { animated?: boolean }) {
                 style={
                   animated
                     ? ({
-                        "--character-start": `${360 + revealStep * 48}ms`,
-                        "--character-delay": `${580 + revealStep * 48}ms`,
+                        "--character-start": `${534 + revealStep * 48}ms`,
+                        "--character-delay": `${754 + revealStep * 48}ms`,
                         "--symbol-offset": `${heroSymbolOffsets[index]}ms`,
                         "--symbol-direction": heroSymbolDirections[index],
                       } as CSSProperties)

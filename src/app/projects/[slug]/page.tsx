@@ -72,7 +72,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   const hero = project.hero ?? project.cover;
   const heroAlt = project.heroAlt ?? project.coverAlt ?? "";
-  const heroIsPortrait = !project.hero && project.coverAspect === "9:16";
   const heroUsesCover = hero === project.cover;
 
   return (
@@ -109,21 +108,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               name={`project-cover-${project.slug}`}
               share="project-cover"
             >
-              <div
-                className={
-                  heroIsPortrait
-                    ? "mx-auto mt-10 aspect-[9/16] w-full max-w-sm overflow-hidden rounded-2xl outline outline-1 -outline-offset-1 outline-foreground/10"
-                    : "mt-10 aspect-[16/10] w-full overflow-hidden rounded-2xl outline outline-1 -outline-offset-1 outline-foreground/10"
-                }
-              >
-                {/* biome-ignore lint/performance/noImgElement: Project images may be local or remote authored media. */}
-                <img
-                  alt={heroAlt}
-                  className="h-full w-full object-cover"
-                  fetchPriority="high"
-                  src={projectAssetUrl(project.slug, hero)}
-                />
-              </div>
+              {/* biome-ignore lint/performance/noImgElement: Project images may be local or remote authored media. */}
+              <img
+                alt={heroAlt}
+                className="mt-10 h-auto w-full rounded-2xl outline outline-1 -outline-offset-1 outline-foreground/10"
+                fetchPriority="high"
+                src={projectAssetUrl(project.slug, hero)}
+              />
             </ViewTransition>
           ) : hero ? (
             // A distinct hero is a new image, so it should not morph from the cover thumbnail.

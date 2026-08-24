@@ -3,7 +3,7 @@ title: "Smart Pill Dispenser"
 description: "An ESP32 medication reminder that combines a seven-day pill organizer, real-time scheduling, and paired visual and audible prompts."
 date: "2026-05-14"
 cover: "https://raw.githubusercontent.com/Tedprogrammer/smart_pill_dispenser/da188f07ac50476c572e933633502aa4873d5466/images/lcd_test.jpg"
-coverAlt: "SolidWorks render of the circular seven-compartment pill organizer"
+coverAlt: "Image of an LCD breadboard wiring"
 ---
 
 Remembering a dose is easy to take for granted. For an older adult living with dementia, however, a missed reminder or an uncertain memory can lead to a skipped dose or to taking the same medication twice. I built the Smart Pill Dispenser as a physical reminder that makes the correct day visible, calls attention to a scheduled dose, and waits for the person to confirm that they have taken it.

@@ -4,7 +4,6 @@ description: "A short summary used in project lists and page metadata."
 date: "YYYY-MM-DD"
 cover: "cover.jpg"
 coverAlt: "Describe the cover image for visitors using assistive technology."
-coverAspect: "16:10"
 hero: "hero.jpg"
 heroAlt: "Describe the project hero image for visitors using assistive technology."
 ---

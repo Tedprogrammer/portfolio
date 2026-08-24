@@ -133,7 +133,7 @@ export function ResumePreviewDialog() {
           </a>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-surface p-3 sm:p-5">
+        <div className="resume-preview-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-surface p-3 sm:p-5">
           <a
             aria-label="Open resume PDF in a new tab"
             className="group mx-auto block max-w-3xl"
@@ -143,7 +143,7 @@ export function ResumePreviewDialog() {
           >
             <Image
               alt="Preview of Luong Hieu Trinh's resume"
-              className="h-auto w-full rounded-lg bg-white shadow-lg shadow-black/10 outline-1 -outline-offset-1 outline-black/10 transition-transform group-active:scale-[0.99]"
+              className="block h-auto w-full rounded-lg bg-white shadow-lg shadow-black/10 outline-1 -outline-offset-1 outline-black/10 transition-transform group-active:scale-[0.99]"
               height={1600}
               sizes="(min-width: 768px) 48rem, calc(100vw - 3.5rem)"
               src="/assets/luong-hieu-trinh-resume.pdf.png"
