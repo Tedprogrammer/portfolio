@@ -28,18 +28,22 @@ export function ProjectList({ projects }: { projects: ProjectSummary[] }) {
                 name={`project-cover-${project.slug}`}
                 share="project-cover"
               >
-                {/* Project images are authored content with dimensions that vary by project. */}
-                {/* biome-ignore lint/performance/noImgElement: The fixed aspect ratio prevents layout shift while preserving colocated media. */}
-                <img
-                  alt={project.coverAlt ?? ""}
+                <div
                   className={
                     project.coverAspect === "9:16"
-                      ? "mx-auto aspect-[9/16] w-full max-w-xs rounded-2xl object-cover outline outline-1 -outline-offset-1 outline-foreground/10 transition-transform duration-200 group-hover:scale-[1.01]"
-                      : "aspect-[16/10] w-full rounded-2xl object-cover outline outline-1 -outline-offset-1 outline-foreground/10 transition-transform duration-200 group-hover:scale-[1.01]"
+                      ? "mx-auto aspect-[9/16] w-full max-w-xs overflow-hidden rounded-2xl outline outline-1 -outline-offset-1 outline-foreground/10 transition-transform duration-200 group-hover:scale-[1.01]"
+                      : "aspect-[16/10] w-full overflow-hidden rounded-2xl outline outline-1 -outline-offset-1 outline-foreground/10 transition-transform duration-200 group-hover:scale-[1.01]"
                   }
-                  loading="lazy"
-                  src={projectAssetUrl(project.slug, project.cover)}
-                />
+                >
+                  {/* Project images are authored content with dimensions that vary by project. */}
+                  {/* biome-ignore lint/performance/noImgElement: The fixed frame prevents layout shift while preserving colocated media. */}
+                  <img
+                    alt={project.coverAlt ?? ""}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    src={projectAssetUrl(project.slug, project.cover)}
+                  />
+                </div>
               </ViewTransition>
             )}
             <div className={project.cover ? "pt-5" : undefined}>
