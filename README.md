@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mechatronics Engineering Portfolio
+
+This is a mechatronics engineering student's personal portfolio website. It showcases engineering projects, technical skills, and experience for prospective employers, collaborators, and other professional visitors.
+
+The site is built with [Next.js](https://nextjs.org) and was bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
@@ -15,6 +19,40 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Adding projects
+
+Projects live in `content/projects`, with one folder per URL slug:
+
+```text
+content/projects/my-project/
+├── index.md
+├── cover.jpg
+└── hero.jpg
+```
+
+Each `index.md` starts with frontmatter and can reference images from the same folder with standard Markdown syntax:
+
+```md
+---
+title: "My project"
+description: "A short summary used in project lists and page metadata."
+date: "2026-08-24"
+cover: "cover.jpg"
+coverAlt: "Description of the cover image"
+coverAspect: "16:10"
+hero: "hero.jpg"
+heroAlt: "Description of the project hero image"
+---
+
+Project content goes here.
+
+![Description of another image](another-photo.jpg)
+```
+
+`cover` is used in the homepage project card. Set `coverAspect` to `"9:16"` for portrait mobile images; it defaults to `"16:10"`. `hero` is used in the project page header. If `hero` is omitted, the header falls back to `cover` and preserves its configured aspect ratio.
+
+At build time, the app scans these folders, sorts projects by date, and statically generates `/projects/<slug>` and each colocated image URL. Supported image formats are AVIF, GIF, JPEG, PNG, SVG, and WebP. `/projects` redirects to the projects section on the homepage.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
