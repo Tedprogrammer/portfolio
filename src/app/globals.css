@@ -1,26 +1,430 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: oklch(1 0 0);
+  --surface: oklch(0.97 0 0);
+  --surface-raised: oklch(1 0 0);
+  --foreground: oklch(0 0 0);
+  --muted: oklch(0.44 0 0);
+  --subtle: oklch(0.6 0 0);
+  --border: oklch(0.87 0 0);
+  --accent: oklch(0.491 0.27 292.581);
+  --accent-hover: oklch(0.432 0.232 292.759);
+  --accent-solid: oklch(0.541 0.281 293.009);
+  --accent-solid-hover: oklch(0.491 0.27 292.581);
+  --accent-foreground: oklch(1 0 0);
+  --focus: oklch(0.606 0.25 292.717);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-solid: var(--accent-solid);
+  --color-accent-solid-hover: var(--accent-solid-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-focus: var(--focus);
+  --font-sans: var(--font-lato);
+  --font-mono: var(--font-ibm-plex-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: dark;
+    --background: oklch(0 0 0);
+    --surface: oklch(0.12 0 0);
+    --surface-raised: oklch(0.17 0 0);
+    --foreground: oklch(1 0 0);
+    --muted: oklch(0.72 0 0);
+    --subtle: oklch(0.56 0 0);
+    --border: oklch(0.28 0 0);
+    --accent: oklch(0.702 0.183 293.541);
+    --accent-hover: oklch(0.811 0.111 293.571);
+    --accent-solid: oklch(0.541 0.281 293.009);
+    --accent-solid-hover: oklch(0.606 0.25 292.717);
+    --focus: oklch(0.702 0.183 293.541);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-lato), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--accent-solid);
+  color: var(--accent-foreground);
+}
+
+:focus-visible {
+  outline-color: var(--focus);
+}
+
+.resume-preview-dialog[open] {
+  animation: resume-dialog-enter 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.resume-preview-dialog[open]::backdrop {
+  animation: resume-backdrop-enter 200ms ease-out both;
+}
+
+.resume-preview-dialog[data-closing="true"] {
+  pointer-events: none;
+  animation: resume-dialog-exit 140ms ease-out both;
+}
+
+.resume-preview-dialog[data-closing="true"]::backdrop {
+  animation: resume-backdrop-exit 140ms ease-out both;
+}
+
+.boot-sequence {
+  display: none;
+}
+
+html[data-boot-complete="true"] .boot-sequence {
+  display: none;
+}
+
+.hero-name__word {
+  display: inline-block;
+}
+
+.hero-name__word:not(:last-child) {
+  margin-inline-end: 0.25em;
+}
+
+.hero-name__character {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .boot-sequence {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: block;
+    pointer-events: none;
+    background: oklch(0 0 0);
+    animation: boot-sequence-exit 264ms cubic-bezier(0.22, 1, 0.36, 1) 1244ms
+      forwards;
+  }
+
+  .boot-sequence__positioner {
+    margin-block-start: 4rem;
+  }
+
+  .boot-sequence__name-frame {
+    display: grid;
+  }
+
+  .boot-sequence__symbols,
+  .boot-name {
+    grid-area: 1 / 1;
+  }
+
+  .boot-sequence__symbols {
+    position: relative;
+    display: grid;
+    place-items: center;
+    color: oklch(0.811 0.111 293.571);
+    font-family: var(--font-ibm-plex-mono), monospace;
+    font-weight: 700;
+    text-shadow: 0 0 1.5rem oklch(0.702 0.183 293.541 / 0.45);
+  }
+
+  .boot-sequence__symbol {
+    position: absolute;
+    opacity: 0;
+    animation: boot-symbol-flash 60ms steps(1, end);
+  }
+
+  .boot-sequence__symbol:nth-child(2) {
+    animation-delay: 48ms;
+  }
+
+  .boot-sequence__symbol:nth-child(3) {
+    animation-delay: 96ms;
+  }
+
+  .boot-sequence__symbol:nth-child(4) {
+    animation-delay: 144ms;
+  }
+
+  .boot-sequence__symbol:nth-child(5) {
+    animation-delay: 192ms;
+  }
+
+  .boot-sequence__symbol:nth-child(6) {
+    animation-delay: 240ms;
+  }
+
+  .boot-sequence__symbol:nth-child(7) {
+    animation-delay: 288ms;
+  }
+
+  .boot-name {
+    color: oklch(0.811 0.111 293.571);
+    opacity: 0;
+    text-align: center;
+    animation: boot-name-reveal 1ms steps(1, end) 336ms forwards;
+  }
+
+  .boot-name__character {
+    position: relative;
+    color: transparent;
+    animation:
+      boot-character-settle 1ms steps(1, end) var(--character-delay) forwards,
+      boot-character-land 264ms linear 980ms forwards;
+  }
+
+  .boot-name__character::before {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: oklch(0.811 0.111 293.571);
+    content: "{";
+    font-family: var(--font-ibm-plex-mono), monospace;
+    opacity: 0;
+    text-shadow: 0 0 1.5rem oklch(0.702 0.183 293.541 / 0.45);
+    animation:
+      boot-character-reveal 1ms steps(1, end) var(--character-start) forwards,
+      boot-character-cycle 220ms steps(1, end)
+      calc(var(--character-start) + var(--symbol-offset)) infinite
+      var(--symbol-direction),
+      boot-character-hide 1ms steps(1, end) var(--character-delay) forwards;
+  }
+
+  .hero-name--static {
+    animation: hero-static-name-settle 1s ease-out 1508ms both;
+  }
+
+  html[data-boot-complete="true"] .hero-name--static {
+    animation: none;
+  }
+}
+
+@keyframes boot-symbol-flash {
+  0%,
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes resume-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes resume-dialog-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.99);
+  }
+}
+
+@keyframes resume-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes resume-backdrop-exit {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes boot-character-cycle {
+  5.5% {
+    content: "λ";
+  }
+
+  11% {
+    content: "#";
+  }
+
+  16.5% {
+    content: "?";
+  }
+
+  22% {
+    content: "/";
+  }
+
+  27.5% {
+    content: "0";
+  }
+
+  33% {
+    content: "∷";
+  }
+
+  38.5% {
+    content: "⌁";
+  }
+
+  44% {
+    content: "%";
+  }
+
+  49.5% {
+    content: "&";
+  }
+
+  55% {
+    content: "+";
+  }
+
+  60.5% {
+    content: "~";
+  }
+
+  66% {
+    content: ">";
+  }
+
+  71.5% {
+    content: "<";
+  }
+
+  77% {
+    content: "=";
+  }
+
+  82.5% {
+    content: "@";
+  }
+
+  88% {
+    content: "^";
+  }
+
+  94% {
+    content: "∆";
+  }
+}
+
+@keyframes boot-character-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes boot-character-hide {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes boot-character-settle {
+  to {
+    color: oklch(0.811 0.111 293.571);
+    text-shadow: 0 0 1.5rem oklch(0.702 0.183 293.541 / 0.45);
+  }
+}
+
+@keyframes boot-name-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes boot-character-land {
+  from {
+    text-shadow: 0 0 1.5rem oklch(0.702 0.183 293.541 / 0.45);
+  }
+
+  to {
+    text-shadow: none;
+  }
+}
+
+@keyframes hero-static-name-settle {
+  from {
+    color: oklch(0.811 0.111 293.571);
+  }
+
+  to {
+    color: var(--foreground);
+  }
+}
+
+@keyframes boot-sequence-exit {
+  to {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(.project-cover),
+::view-transition-group(.project-title) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-image-pair(.project-cover) {
+  isolation: auto;
+}
+
+::view-transition-old(.project-cover),
+::view-transition-new(.project-cover) {
+  height: 100%;
+  mix-blend-mode: normal;
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-preview-dialog[open],
+  .resume-preview-dialog[open]::backdrop,
+  .resume-preview-dialog[data-closing="true"],
+  .resume-preview-dialog[data-closing="true"]::backdrop {
+    animation-duration: 0.001ms;
+  }
+
+  .resume-preview-dialog[open],
+  .resume-preview-dialog[data-closing="true"] {
+    transform: none;
+  }
+
+  ::view-transition-group(.project-cover),
+  ::view-transition-group(.project-title) {
+    animation-duration: 0.001ms;
+  }
 }
