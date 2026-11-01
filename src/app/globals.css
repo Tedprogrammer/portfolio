@@ -31,8 +31,8 @@
   --color-accent-solid-hover: var(--accent-solid-hover);
   --color-accent-foreground: var(--accent-foreground);
   --color-focus: var(--focus);
-  --font-sans: var(--font-lato);
-  --font-mono: var(--font-ibm-plex-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "Courier New", Courier, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -56,7 +56,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-lato), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
 
 ::selection {
@@ -143,7 +143,7 @@ html[data-boot-complete="true"] .boot-sequence {
     display: grid;
     place-items: center;
     color: oklch(0.811 0.111 293.571);
-    font-family: var(--font-ibm-plex-mono), monospace;
+    font-family: var(--font-mono);
     font-weight: 700;
     text-shadow: 0 0 1.5rem oklch(0.702 0.183 293.541 / 0.45);
   }
@@ -200,7 +200,7 @@ html[data-boot-complete="true"] .boot-sequence {
     place-items: center;
     color: oklch(0.811 0.111 293.571);
     content: "{";
-    font-family: var(--font-ibm-plex-mono), monospace;
+    font-family: var(--font-mono);
     opacity: 0;
     text-shadow: 0 0 1.5rem oklch(0.702 0.183 293.541 / 0.45);
     animation:
