@@ -185,6 +185,7 @@ const vi: Dictionary = {
   project: {
     breadcrumb: "Đường dẫn",
     projects: "Dự án",
+    back: "Quay lại dự án",
     untranslated: "Bài viết này hiện chỉ có bằng tiếng Anh.",
   },
   og: {

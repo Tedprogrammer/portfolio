@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import { type ComponentProps, ViewTransition } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { BackToProjectsButton } from "@/components/back-to-projects-button";
 import { getDictionary } from "@/lib/dictionaries";
 import {
   intlLocales,
   isLocale,
   languageAlternates,
+  localePath,
   ogLocales,
 } from "@/lib/i18n";
 import { getProject, getProjectSlugs, projectAssetUrl } from "@/lib/projects";
@@ -111,7 +113,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       id="main-content"
     >
       <section>
-        <header className="mb-12">
+        <header className="relative mb-12">
+          {/* Wide screens: beside the article in the left margin, lined up with
+              the date. Narrower screens have no margin, so it sits above. */}
+          <div className="mb-6 xl:absolute xl:top-0 xl:right-full xl:mb-0 xl:-mt-3.5 xl:mr-12">
+            <BackToProjectsButton
+              href={localePath(lang, "/")}
+              label={t.project.back}
+            />
+          </div>
           <time className="text-sm text-subtle" dateTime={project.date}>
             {dateFormatter.format(new Date(project.date))}
           </time>

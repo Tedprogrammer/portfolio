@@ -189,6 +189,7 @@ const en = {
   project: {
     breadcrumb: "Breadcrumb",
     projects: "Projects",
+    back: "Back to projects",
     untranslated: null as string | null,
   },
   og: {
