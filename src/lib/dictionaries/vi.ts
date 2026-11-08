@@ -187,6 +187,10 @@ const vi: Dictionary = {
     projects: "Dự án",
     untranslated: "Bài viết này hiện chỉ có bằng tiếng Anh.",
   },
+  og: {
+    homeTagline: "Kỹ thuật cơ điện tử · RMIT",
+    projectTagline: (year: string) => `Dự án · ${year} · Luong Hieu Trinh`,
+  },
 };
 
 export default vi;

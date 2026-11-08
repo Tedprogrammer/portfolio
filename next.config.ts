@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // Let Cloudflare quick tunnels load dev-only resources such as hot reload.
+  allowedDevOrigins: ["*.trycloudflare.com"],
   async redirects() {
     return [
       {

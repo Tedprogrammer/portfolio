@@ -4,7 +4,12 @@ import { type ComponentProps, ViewTransition } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getDictionary } from "@/lib/dictionaries";
-import { intlLocales, isLocale, languageAlternates } from "@/lib/i18n";
+import {
+  intlLocales,
+  isLocale,
+  languageAlternates,
+  ogLocales,
+} from "@/lib/i18n";
 import { getProject, getProjectSlugs, projectAssetUrl } from "@/lib/projects";
 
 type ProjectPageProps = PageProps<"/[lang]/projects/[slug]">;
@@ -30,12 +35,22 @@ export async function generateMetadata({
     notFound();
   }
 
+  const { site } = getDictionary(lang);
   const alternates = languageAlternates(lang, `/projects/${slug}`);
 
   return {
     title: project.title,
     description: project.description,
     alternates,
+    openGraph: {
+      siteName: site.name,
+      type: "article",
+      locale: ogLocales[lang],
+      url: alternates.canonical,
+      title: `${project.title} | ${site.name}`,
+      description: project.description,
+      publishedTime: project.date,
+    },
   };
 }
 

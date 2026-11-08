@@ -191,6 +191,10 @@ const en = {
     projects: "Projects",
     untranslated: null as string | null,
   },
+  og: {
+    homeTagline: "Mechatronics engineering · RMIT",
+    projectTagline: (year: string) => `Project · ${year} · Luong Hieu Trinh`,
+  },
 };
 
 export type Dictionary = typeof en;
