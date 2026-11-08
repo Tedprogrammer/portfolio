@@ -109,7 +109,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <main
-      className="mx-auto w-full max-w-3xl px-6 py-12 sm:px-10 sm:py-20"
+      className="mx-auto w-full max-w-3xl px-6 pt-8 pb-12 sm:px-10 sm:pt-12 sm:pb-20"
       id="main-content"
     >
       <section>

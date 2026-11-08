@@ -28,7 +28,7 @@ export default async function ProjectLayout({
         aria-label={t.project.breadcrumb}
         className="border-b border-border bg-surface/70"
       >
-        <ol className="mx-auto flex min-h-12 w-full max-w-5xl items-center gap-2 overflow-hidden px-6 font-mono text-xs sm:px-10">
+        <ol className="mx-auto flex min-h-12 w-full max-w-3xl items-center gap-2 overflow-hidden px-6 font-mono text-xs sm:px-10">
           <li className="shrink-0">
             <Link
               className="text-muted transition-colors hover:text-accent"
