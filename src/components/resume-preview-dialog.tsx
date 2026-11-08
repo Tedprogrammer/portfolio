@@ -2,10 +2,15 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+import type { Dictionary } from "@/lib/dictionaries";
 
 const resumePath = "/assets/luong-hieu-trinh-resume.pdf";
 
-export function ResumePreviewDialog() {
+export function ResumePreviewDialog({
+  labels,
+}: {
+  labels: Dictionary["resume"];
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -27,7 +32,7 @@ export function ResumePreviewDialog() {
         onClick={openDialog}
         type="button"
       >
-        View resume
+        {labels.open}
       </button>
 
       <dialog
@@ -59,14 +64,16 @@ export function ResumePreviewDialog() {
                 className="truncate text-sm font-bold text-foreground sm:text-base"
                 id="resume-dialog-title"
               >
-                Luong Hieu Trinh - Resume
+                {labels.title}
               </h2>
-              <p className="mt-0.5 font-mono text-xs text-subtle">1 page</p>
+              <p className="mt-0.5 font-mono text-xs text-subtle">
+                {labels.pages}
+              </p>
             </div>
           </div>
 
           <button
-            aria-label="Close resume preview"
+            aria-label={labels.close}
             className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-[border-color,color,transform] hover:border-accent hover:text-accent active:scale-[0.96]"
             onClick={closeDialog}
             type="button"
@@ -108,7 +115,7 @@ export function ResumePreviewDialog() {
                 strokeWidth="2"
               />
             </svg>
-            Open PDF
+            {labels.openPdf}
           </a>
           <a
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-accent-solid px-4 text-sm font-bold text-accent-foreground transition-[background-color,transform] hover:bg-accent-solid-hover active:scale-[0.96]"
@@ -129,20 +136,20 @@ export function ResumePreviewDialog() {
                 strokeWidth="2"
               />
             </svg>
-            Download
+            {labels.download}
           </a>
         </div>
 
         <div className="resume-preview-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-surface p-3 sm:p-5">
           <a
-            aria-label="Open resume PDF in a new tab"
+            aria-label={labels.openInNewTab}
             className="group mx-auto block max-w-3xl"
             href={resumePath}
             rel="noreferrer"
             target="_blank"
           >
             <Image
-              alt="Preview of Luong Hieu Trinh's resume"
+              alt={labels.previewAlt}
               className="block h-auto w-full rounded-lg bg-white shadow-lg shadow-black/10 outline-1 -outline-offset-1 outline-black/10 transition-transform group-active:scale-[0.99]"
               height={1600}
               sizes="(min-width: 768px) 48rem, calc(100vw - 3.5rem)"

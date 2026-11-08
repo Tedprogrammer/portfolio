@@ -9,6 +9,16 @@ const nextConfig: NextConfig = {
         destination: "/#projects",
         permanent: true,
       },
+      {
+        source: "/en/projects",
+        destination: "/#projects",
+        permanent: true,
+      },
+      {
+        source: "/vi/projects",
+        destination: "/vi#projects",
+        permanent: true,
+      },
     ];
   },
 };

@@ -1,112 +1,45 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import { HomeBootController } from "@/components/home-boot-controller";
 import { ProjectList } from "@/components/project-list";
 import { ResumePreviewDialog } from "@/components/resume-preview-dialog";
 import { SmoothScrollLink } from "@/components/smooth-scroll-link";
+import { getDictionary, type SkillGroupKey } from "@/lib/dictionaries";
+import { isLocale } from "@/lib/i18n";
 import { getAllProjects } from "@/lib/projects";
 
-type SkillIconName =
-  | "design"
-  | "manufacturing"
-  | "electronics"
-  | "programming"
-  | "leadership";
-
-const skillGroups: Array<{
-  title: string;
-  icon: SkillIconName;
-  skills: string[];
-  gridClassName: string;
-}> = [
-  {
-    title: "CAD & product design",
-    icon: "design",
-    skills: [
-      "SolidWorks",
-      "AutoCAD",
-      "Onshape",
-      "Shapr3D",
-      "Blender",
-      "Mechanical design",
-    ],
-    gridClassName: "lg:col-span-2",
-  },
-  {
-    title: "Manufacturing & prototyping",
-    icon: "manufacturing",
-    skills: [
-      "Mastercam",
-      "CNC machining",
-      "3D printing",
-      "Laser cutting",
-      "Precision components",
-      "Mechanical assembly",
-    ],
-    gridClassName: "lg:col-span-2",
-  },
-  {
-    title: "Electronics & robotics",
-    icon: "electronics",
-    skills: [
-      "KiCad",
-      "PCB design",
-      "Robot wiring",
-      "Chassis prototyping",
-      "Electromechanical systems",
-      "Wireless power",
-    ],
-    gridClassName: "lg:col-span-2",
-  },
-  {
-    title: "Programming & digital systems",
-    icon: "programming",
-    skills: [
-      "C",
-      "C++",
-      "Python",
-      "MATLAB",
-      "HTML & CSS",
-      "WordPress",
-      "GitHub",
-      "IT troubleshooting",
-    ],
-    gridClassName: "lg:col-span-3",
-  },
-  {
-    title: "Leadership & operations",
-    icon: "leadership",
-    skills: [
-      "Event leadership",
-      "Logistics planning",
-      "Volunteer coordination",
-      "Fundraising",
-      "Inventory management",
-      "Customer service",
-      "Cross-team collaboration",
-    ],
-    gridClassName: "lg:col-span-3",
-  },
+// Copy lives in the dictionaries; this only sets the order and grid layout.
+const skillGroupLayout: Array<{ key: SkillGroupKey; gridClassName: string }> = [
+  { key: "design", gridClassName: "lg:col-span-2" },
+  { key: "manufacturing", gridClassName: "lg:col-span-2" },
+  { key: "electronics", gridClassName: "lg:col-span-2" },
+  { key: "programming", gridClassName: "lg:col-span-3" },
+  { key: "leadership", gridClassName: "lg:col-span-3" },
 ];
 
-const contactLinks = [
+const contactLinks: Array<{
+  label: "email" | "linkedin" | "github" | "phone";
+  value: string;
+  href: string;
+}> = [
   {
-    label: "Email",
+    label: "email",
     value: "luonghieutrinh@gmail.com",
     href: "mailto:luonghieutrinh@gmail.com",
   },
   {
-    label: "LinkedIn",
+    label: "linkedin",
     value: "linkedin.com/in/luonghieutrinh",
     href: "https://linkedin.com/in/luonghieutrinh",
   },
   {
-    label: "GitHub",
+    label: "github",
     value: "github.com/Tedprogrammer",
     href: "https://github.com/Tedprogrammer",
   },
   {
-    label: "Phone",
+    label: "phone",
     value: "+61 401 966 608",
     href: "tel:+61401966608",
   },
@@ -180,42 +113,7 @@ function HeroNameCharacters({ animated = false }: { animated?: boolean }) {
   );
 }
 
-const experience = [
-  {
-    period: "May 2026 - Present",
-    role: "Product Design Intern",
-    organization: "ElectraWireless",
-    location: "Remote",
-    summary:
-      "Designing wireless kitchen appliances in SolidWorks, applying wireless power principles, and collaborating with the electrical team to prepare products for manufacturing and assembly.",
-  },
-  {
-    period: "Dec 2025 - Present",
-    role: "IT and Digital Systems Support Volunteer",
-    organization: "VoteGuard International Ltd.",
-    location: "Claymore, NSW",
-    summary:
-      "Maintaining the organization's WordPress website, troubleshooting email, hosting, and DNS issues, and supporting cloud file management and cybersecurity protocols.",
-  },
-  {
-    period: "Nov 2025 - Feb 2026",
-    role: "CNC Machine Operator",
-    organization: "Point Precision Engineering Pty Ltd.",
-    location: "Nunawading, VIC",
-    summary:
-      "Built hands-on experience across CNC machining workflows, manufacturing a product with SolidWorks and Mastercam while learning precision production and assembly techniques.",
-  },
-  {
-    period: "Jun 2022 - Present",
-    role: "Retail Operations and Customer Service",
-    organization: "Simon Oz, Queen Victoria Market",
-    location: "Melbourne, VIC",
-    summary:
-      "Managing inventory, stock replenishment, product displays, and customer service in a high-traffic retail environment.",
-  },
-];
-
-function SkillIcon({ name }: { name: SkillIconName }) {
+function SkillIcon({ name }: { name: SkillGroupKey }) {
   if (name === "design") {
     return (
       <svg
@@ -311,8 +209,15 @@ function SkillIcon({ name }: { name: SkillIconName }) {
   );
 }
 
-export default function Home() {
-  const projects = getAllProjects();
+export default async function Home({ params }: PageProps<"/[lang]">) {
+  const { lang } = await params;
+
+  if (!isLocale(lang)) {
+    notFound();
+  }
+
+  const t = getDictionary(lang);
+  const projects = getAllProjects(lang);
 
   return (
     <>
@@ -321,7 +226,7 @@ export default function Home() {
         <div className="boot-sequence__positioner mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-5xl items-center px-6 py-20 sm:px-10 sm:py-28">
           <div className="mx-auto max-w-3xl text-center">
             <p className="invisible font-mono text-xs font-bold uppercase tracking-[0.2em]">
-              Mechatronics engineering student
+              {t.hero.eyebrow}
             </p>
             <div className="boot-sequence__name-frame mt-6 max-w-3xl text-[3.6rem] font-black leading-[0.95] tracking-[-0.04em] text-balance sm:text-[5.4rem]">
               <span className="boot-sequence__symbols">
@@ -338,15 +243,14 @@ export default function Home() {
               </span>
             </div>
             <p className="invisible mt-8 max-w-2xl text-lg leading-8 text-pretty sm:text-xl sm:leading-9">
-              I&apos;m an RMIT mechatronics engineering student working across
-              product design, manufacturing, electronics, and software.
+              {t.hero.intro}
             </p>
             <div className="invisible mt-10 flex flex-wrap justify-center gap-3">
               <span className="inline-flex min-h-12 items-center justify-center rounded-full px-6 text-sm font-bold">
-                View resume
+                {t.resume.open}
               </span>
               <span className="inline-flex min-h-12 items-center justify-center rounded-full border px-6 text-sm font-bold">
-                Explore my work
+                {t.hero.exploreWork}
               </span>
             </div>
           </div>
@@ -375,7 +279,7 @@ export default function Home() {
         >
           <div className="mx-auto max-w-3xl text-center">
             <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-accent">
-              Mechatronics engineering student
+              {t.hero.eyebrow}
             </p>
             <h1
               aria-label={heroName}
@@ -384,16 +288,15 @@ export default function Home() {
               <HeroNameCharacters />
             </h1>
             <p className="mt-8 max-w-2xl text-lg leading-8 text-muted text-pretty sm:text-xl sm:leading-9">
-              I&apos;m an RMIT mechatronics engineering student working across
-              product design, manufacturing, electronics, and software.
+              {t.hero.intro}
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-3">
-              <ResumePreviewDialog />
+              <ResumePreviewDialog labels={t.resume} />
               <SmoothScrollLink
                 className="inline-flex min-h-12 items-center justify-center rounded-full border border-border px-6 text-sm font-bold text-foreground transition-[border-color,color,transform] hover:border-accent hover:text-accent active:scale-[0.96]"
                 href="#projects"
               >
-                Explore my work
+                {t.hero.exploreWork}
               </SmoothScrollLink>
             </div>
           </div>
@@ -407,26 +310,23 @@ export default function Home() {
           <div className="mx-auto grid w-full max-w-5xl gap-12 px-6 py-24 sm:px-10 sm:py-32 lg:grid-cols-2 lg:gap-24">
             <div>
               <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-accent-hover">
-                01 / About
+                {t.about.eyebrow}
               </p>
               <h2
                 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl"
                 id="about-heading"
               >
-                Built across disciplines
+                {t.about.heading}
               </h2>
               <p className="mt-6 max-w-lg text-lg leading-8 text-background/70 text-pretty">
-                I enjoy turning concepts into physical results, from CAD and CNC
-                machining to robotics, PCB design, and software. This site
-                documents the projects and practical experience behind that
-                work.
+                {t.about.body}
               </p>
             </div>
 
             <div>
               <div className="max-w-sm overflow-hidden rounded-2xl">
                 <Image
-                  alt="Portrait of Luong Hieu Trinh"
+                  alt={t.about.portraitAlt}
                   className="h-auto w-full"
                   height={1355}
                   sizes="(min-width: 1024px) 26rem, (min-width: 640px) 24rem, calc(100vw - 3rem)"
@@ -447,17 +347,21 @@ export default function Home() {
             <div className="mb-12">
               <div>
                 <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                  02 / Projects
+                  {t.projects.eyebrow}
                 </p>
                 <h2
                   className="mt-4 text-3xl font-black tracking-tight text-foreground sm:text-4xl"
                   id="projects-heading"
                 >
-                  Selected work
+                  {t.projects.heading}
                 </h2>
               </div>
             </div>
-            <ProjectList projects={projects} />
+            <ProjectList
+              emptyLabel={t.projects.empty}
+              lang={lang}
+              projects={projects}
+            />
           </div>
         </section>
 
@@ -469,44 +373,40 @@ export default function Home() {
           <div className="mx-auto grid w-full max-w-5xl gap-14 px-6 py-24 sm:px-10 sm:py-32 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
             <div className="lg:sticky lg:top-24 lg:self-start">
               <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                03 / Experience
+                {t.experience.eyebrow}
               </p>
               <h2
                 className="mt-4 text-3xl font-black tracking-tight text-foreground sm:text-4xl"
                 id="experience-heading"
               >
-                Learning by making
+                {t.experience.heading}
               </h2>
               <p className="mt-6 max-w-md leading-7 text-muted text-pretty">
-                My studies and industry experience connect engineering theory
-                with product design, CNC manufacturing, digital systems, and
-                practical prototyping.
+                {t.experience.intro}
               </p>
             </div>
 
             <div className="space-y-12">
               <article className="grid gap-3 border-s-2 border-accent ps-6 sm:grid-cols-[9rem_1fr] sm:gap-8">
-                <p className="font-mono text-sm text-subtle">Education</p>
+                <p className="font-mono text-sm text-subtle">
+                  {t.experience.education.label}
+                </p>
                 <div>
                   <h3 className="text-xl font-black tracking-tight text-foreground">
-                    Bachelor of Engineering
+                    {t.experience.education.degree}
                   </h3>
                   <p className="mt-1 font-bold text-foreground">
-                    Advanced Manufacturing and Mechatronics, RMIT University
+                    {t.experience.education.program}
                   </p>
                   <p className="mt-1 font-mono text-sm text-subtle">
-                    Jul 2025 - Jun 2029
+                    {t.experience.education.period}
                   </p>
                   <p className="mt-3 leading-7 text-muted text-pretty">
-                    Coursework includes advanced mathematics, engineering
-                    design, electrical and electronic engineering, and digital
-                    fundamentals. I participate in Advanced RMIT Competitive
-                    Robotics, RUASRT, and RMIT Rover Payload, and I am a member
-                    of Engineers Australia.
+                    {t.experience.education.summary}
                   </p>
                 </div>
               </article>
-              {experience.map((role) => (
+              {t.experience.roles.map((role) => (
                 <article
                   className="grid gap-3 border-s-2 border-border ps-6 sm:grid-cols-[9rem_1fr] sm:gap-8"
                   key={`${role.organization}-${role.role}`}
@@ -530,19 +430,17 @@ export default function Home() {
               ))}
               <article className="grid gap-3 border-s-2 border-border ps-6 sm:grid-cols-[9rem_1fr] sm:gap-8">
                 <p className="font-mono text-sm text-subtle">
-                  Jan 2024 - Aug 2025
+                  {t.experience.leadership.period}
                 </p>
                 <div>
                   <h3 className="text-xl font-black tracking-tight text-foreground">
-                    Tournament Leader and Event Organizer
+                    {t.experience.leadership.role}
                   </h3>
                   <p className="mt-1 font-bold text-foreground">
-                    IB CAS Tournament Leadership and Fundraising
+                    {t.experience.leadership.organization}
                   </p>
                   <p className="mt-3 leading-7 text-muted text-pretty">
-                    Organized chess and badminton tournaments for more than 100
-                    participants, coordinating logistics and volunteers while
-                    raising approximately AUD $1,000 for local charities.
+                    {t.experience.leadership.summary}
                   </p>
                 </div>
               </article>
@@ -557,35 +455,34 @@ export default function Home() {
         >
           <div className="mx-auto w-full max-w-5xl px-6 py-24 sm:px-10 sm:py-32">
             <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-accent">
-              04 / Skills
+              {t.skills.eyebrow}
             </p>
             <h2
               className="mt-4 text-3xl font-black tracking-tight text-foreground sm:text-4xl"
               id="skills-heading"
             >
-              Technical skills
+              {t.skills.heading}
             </h2>
             <p className="mt-6 max-w-3xl text-lg leading-8 text-muted text-pretty">
-              Practical capabilities developed through engineering coursework,
-              industry experience, robotics teams, and hands-on projects.
+              {t.skills.intro}
             </p>
 
             <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-6">
-              {skillGroups.map((group) => (
+              {skillGroupLayout.map(({ key, gridClassName }) => (
                 <article
-                  className={`rounded-2xl border border-border bg-surface p-6 ${group.gridClassName}`}
-                  key={group.title}
+                  className={`rounded-2xl border border-border bg-surface p-6 ${gridClassName}`}
+                  key={key}
                 >
                   <div className="flex items-center gap-4">
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent-hover">
-                      <SkillIcon name={group.icon} />
+                      <SkillIcon name={key} />
                     </span>
                     <h3 className="font-black tracking-tight text-foreground">
-                      {group.title}
+                      {t.skills.groups[key].title}
                     </h3>
                   </div>
                   <ul className="mt-7 flex flex-wrap gap-2">
-                    {group.skills.map((skill) => (
+                    {t.skills.groups[key].skills.map((skill) => (
                       <li
                         className="rounded-full border border-accent/25 bg-accent/5 px-3.5 py-2 text-sm font-bold text-accent-hover transition-[background-color,border-color,box-shadow,transform] duration-150 ease-out hover:border-accent/50 hover:bg-accent/10 hover:shadow-sm motion-safe:hover:-translate-y-0.5"
                         key={skill}
@@ -608,17 +505,16 @@ export default function Home() {
           <div className="mx-auto grid w-full max-w-5xl gap-12 px-6 py-24 sm:px-10 sm:py-32 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
             <div>
               <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                05 / Contact
+                {t.contact.eyebrow}
               </p>
               <h2
                 className="mt-4 text-3xl font-black tracking-tight text-balance text-foreground sm:text-4xl"
                 id="contact-heading"
               >
-                Let&apos;s build something useful.
+                {t.contact.heading}
               </h2>
               <p className="mt-6 max-w-md leading-7 text-muted text-pretty">
-                Have a project, role, or collaboration in mind? Email me
-                directly or connect with me online.
+                {t.contact.intro}
               </p>
             </div>
 
@@ -631,7 +527,7 @@ export default function Home() {
                       href={link.href}
                     >
                       <span className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent">
-                        {link.label}
+                        {t.contact.labels[link.label]}
                       </span>
                       <span className="mt-8 break-words font-bold text-foreground underline decoration-border underline-offset-4 transition-colors group-hover:decoration-accent">
                         {link.value}

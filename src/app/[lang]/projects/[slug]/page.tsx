@@ -3,16 +3,11 @@ import { notFound } from "next/navigation";
 import { type ComponentProps, ViewTransition } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { getDictionary } from "@/lib/dictionaries";
+import { intlLocales, isLocale, languageAlternates } from "@/lib/i18n";
 import { getProject, getProjectSlugs, projectAssetUrl } from "@/lib/projects";
 
-type ProjectPageProps = PageProps<"/projects/[slug]">;
-
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
+type ProjectPageProps = PageProps<"/[lang]/projects/[slug]">;
 
 export const dynamicParams = false;
 
@@ -23,16 +18,24 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const project = getProject(slug);
+  const { lang, slug } = await params;
+
+  if (!isLocale(lang)) {
+    notFound();
+  }
+
+  const project = getProject(slug, lang);
 
   if (!project) {
     notFound();
   }
 
+  const alternates = languageAlternates(lang, `/projects/${slug}`);
+
   return {
     title: project.title,
     description: project.description,
+    alternates,
   };
 }
 
@@ -63,12 +66,25 @@ function ProjectImage({
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { slug } = await params;
-  const project = getProject(slug);
+  const { lang, slug } = await params;
+
+  if (!isLocale(lang)) {
+    notFound();
+  }
+
+  const project = getProject(slug, lang);
 
   if (!project) {
     notFound();
   }
+
+  const t = getDictionary(lang);
+  const dateFormatter = new Intl.DateTimeFormat(intlLocales[lang], {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
   const hero = project.hero ?? project.cover;
   const heroAlt = project.heroAlt ?? project.coverAlt ?? "";
@@ -102,6 +118,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted text-pretty">
             {project.description}
           </p>
+          {!project.translated && t.project.untranslated ? (
+            <p className="mt-6 inline-flex rounded-full border border-border px-4 py-2 font-mono text-xs text-subtle">
+              {t.project.untranslated}
+            </p>
+          ) : null}
           {hero && heroUsesCover ? (
             <ViewTransition
               default="none"
@@ -127,7 +148,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             />
           ) : null}
         </header>
-        <div className="text-[1.0625rem] leading-8 text-muted">
+        <div
+          className="text-[1.0625rem] leading-8 text-muted"
+          lang={project.translated ? undefined : "en"}
+        >
           <ReactMarkdown
             components={{
               a: ({ children, ...props }) => (
