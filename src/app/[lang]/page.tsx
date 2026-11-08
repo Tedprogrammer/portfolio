@@ -2,6 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import { HomeBootController } from "@/components/home-boot-controller";
+import { HomeScrollMemory } from "@/components/home-scroll-memory";
 import { ProjectList } from "@/components/project-list";
 import { ResumePreviewDialog } from "@/components/resume-preview-dialog";
 import { SmoothScrollLink } from "@/components/smooth-scroll-link";
@@ -222,6 +223,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   return (
     <>
       <HomeBootController />
+      <HomeScrollMemory />
       <div aria-hidden="true" className="boot-sequence">
         <div className="boot-sequence__positioner mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-5xl items-center px-6 py-20 sm:px-10 sm:py-28">
           <div className="mx-auto max-w-3xl text-center">
