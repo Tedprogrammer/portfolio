@@ -3,6 +3,7 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { defaultLocale, type Locale } from "@/lib/i18n";
 
 const projectsDirectory = path.join(process.cwd(), "content", "projects");
 const assetExtensions = new Set([
@@ -24,6 +25,8 @@ export type ProjectSummary = {
   coverAlt?: string;
   hero?: string;
   heroAlt?: string;
+  /** False when a translation was requested but the English file was used. */
+  translated: boolean;
 };
 
 export type Project = ProjectSummary & {
@@ -78,13 +81,33 @@ export function getProjectSlugs() {
     .map((entry) => entry.name);
 }
 
-export function getProject(slug: string): Project | null {
+/**
+ * Translations live beside the English source as `index.<locale>.md`
+ * (e.g. `index.vi.md`). Missing translations fall back to `index.md`.
+ */
+function projectSourceName(slug: string, locale: Locale) {
+  if (locale !== defaultLocale) {
+    const translatedName = `index.${locale}.md`;
+
+    if (fs.existsSync(path.join(projectsDirectory, slug, translatedName))) {
+      return { name: translatedName, translated: true };
+    }
+  }
+
+  return { name: "index.md", translated: locale === defaultLocale };
+}
+
+export function getProject(
+  slug: string,
+  locale: Locale = defaultLocale,
+): Project | null {
   if (!getProjectSlugs().includes(slug)) {
     return null;
   }
 
+  const { name, translated } = projectSourceName(slug, locale);
   const source = fs.readFileSync(
-    path.join(projectDirectory(slug), "index.md"),
+    path.join(projectsDirectory, slug, name),
     "utf8",
   );
   const { data, content } = matter(source);
@@ -98,13 +121,16 @@ export function getProject(slug: string): Project | null {
     coverAlt: optionalString(data.coverAlt, "coverAlt", slug),
     hero: optionalString(data.hero, "hero", slug),
     heroAlt: optionalString(data.heroAlt, "heroAlt", slug),
+    translated,
     content,
   };
 }
 
-export function getAllProjects(): ProjectSummary[] {
+export function getAllProjects(
+  locale: Locale = defaultLocale,
+): ProjectSummary[] {
   return getProjectSlugs()
-    .map((slug) => getProject(slug))
+    .map((slug) => getProject(slug, locale))
     .filter((project): project is Project => project !== null)
     .sort((first, second) => second.date.localeCompare(first.date))
     .map(({ content: _content, ...project }) => project);

@@ -1,18 +1,27 @@
 import Link from "next/link";
 import { ViewTransition } from "react";
+import { intlLocales, type Locale, localePath } from "@/lib/i18n";
 import { type ProjectSummary, projectAssetUrl } from "@/lib/projects";
 
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-export function ProjectList({ projects }: { projects: ProjectSummary[] }) {
+export function ProjectList({
+  emptyLabel,
+  lang,
+  projects,
+}: {
+  emptyLabel: string;
+  lang: Locale;
+  projects: ProjectSummary[];
+}) {
   if (projects.length === 0) {
-    return <p className="text-muted">No projects published yet.</p>;
+    return <p className="text-muted">{emptyLabel}</p>;
   }
+
+  const dateFormatter = new Intl.DateTimeFormat(intlLocales[lang], {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
   return (
     <div className="columns-1 gap-10 sm:columns-2">
@@ -23,7 +32,7 @@ export function ProjectList({ projects }: { projects: ProjectSummary[] }) {
         >
           <Link
             className="block overflow-hidden rounded-2xl border border-border bg-background outline-none transition-[border-color,box-shadow] duration-200 hover:border-accent/40 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-4 focus-visible:ring-offset-background"
-            href={`/projects/${project.slug}`}
+            href={localePath(lang, `/projects/${project.slug}`)}
           >
             {project.cover && (
               <ViewTransition

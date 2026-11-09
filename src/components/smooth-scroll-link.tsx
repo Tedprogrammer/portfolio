@@ -4,7 +4,8 @@ import Link from "next/link";
 import type { ComponentProps, MouseEvent } from "react";
 
 type SmoothScrollLinkProps = ComponentProps<"a"> & {
-  href: `#${string}` | `/#${string}`;
+  /** "#section" for this page, or "<page path>#section", e.g. "/vi#projects". */
+  href: `${string}#${string}`;
 };
 
 export function SmoothScrollLink({
@@ -26,13 +27,15 @@ export function SmoothScrollLink({
       return;
     }
 
-    const isLandingPageLink = href.startsWith("/#");
+    const hashIndex = href.indexOf("#");
+    const targetPath = href.slice(0, hashIndex);
 
-    if (isLandingPageLink && window.location.pathname !== "/") {
+    // Links to a section of another page navigate normally.
+    if (targetPath && targetPath !== window.location.pathname) {
       return;
     }
 
-    const hash = href.slice(href.indexOf("#"));
+    const hash = href.slice(hashIndex);
     const target = document.getElementById(hash.slice(1));
 
     if (!target) {
@@ -40,7 +43,7 @@ export function SmoothScrollLink({
     }
 
     event.preventDefault();
-    window.history.pushState(null, "", isLandingPageLink ? `/${hash}` : hash);
+    window.history.pushState(null, "", `${targetPath}${hash}`);
     target.scrollIntoView({
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "auto"

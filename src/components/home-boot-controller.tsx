@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
+import { isReturningToHome } from "@/components/home-scroll-memory";
 
 const bootSequenceDuration = 2682;
 
@@ -21,6 +22,13 @@ export function HomeBootController() {
 
     root.dataset.bootStarted = "true";
     ownsBootSequence.current = true;
+
+    // Returning from a project (back button or browser history): keep the
+    // visitor's place instead of replaying the intro from the top.
+    if (isReturningToHome()) {
+      root.dataset.bootComplete = "true";
+      return;
+    }
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       root.dataset.bootComplete = "true";

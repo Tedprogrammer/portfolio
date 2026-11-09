@@ -3,16 +3,18 @@ import { notFound } from "next/navigation";
 import { type ComponentProps, ViewTransition } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { BackToProjectsButton } from "@/components/back-to-projects-button";
+import { getDictionary } from "@/lib/dictionaries";
+import {
+  intlLocales,
+  isLocale,
+  languageAlternates,
+  localePath,
+  ogLocales,
+} from "@/lib/i18n";
 import { getProject, getProjectSlugs, projectAssetUrl } from "@/lib/projects";
 
-type ProjectPageProps = PageProps<"/projects/[slug]">;
-
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
+type ProjectPageProps = PageProps<"/[lang]/projects/[slug]">;
 
 export const dynamicParams = false;
 
@@ -23,16 +25,34 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const project = getProject(slug);
+  const { lang, slug } = await params;
+
+  if (!isLocale(lang)) {
+    notFound();
+  }
+
+  const project = getProject(slug, lang);
 
   if (!project) {
     notFound();
   }
 
+  const { site } = getDictionary(lang);
+  const alternates = languageAlternates(lang, `/projects/${slug}`);
+
   return {
     title: project.title,
     description: project.description,
+    alternates,
+    openGraph: {
+      siteName: site.name,
+      type: "article",
+      locale: ogLocales[lang],
+      url: alternates.canonical,
+      title: `${project.title} | ${site.name}`,
+      description: project.description,
+      publishedTime: project.date,
+    },
   };
 }
 
@@ -63,12 +83,25 @@ function ProjectImage({
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { slug } = await params;
-  const project = getProject(slug);
+  const { lang, slug } = await params;
+
+  if (!isLocale(lang)) {
+    notFound();
+  }
+
+  const project = getProject(slug, lang);
 
   if (!project) {
     notFound();
   }
+
+  const t = getDictionary(lang);
+  const dateFormatter = new Intl.DateTimeFormat(intlLocales[lang], {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
   const hero = project.hero ?? project.cover;
   const heroAlt = project.heroAlt ?? project.coverAlt ?? "";
@@ -76,11 +109,19 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <main
-      className="mx-auto w-full max-w-3xl px-6 py-12 sm:px-10 sm:py-20"
+      className="mx-auto w-full max-w-3xl px-6 pt-8 pb-12 sm:px-10 sm:pt-12 sm:pb-20"
       id="main-content"
     >
       <section>
-        <header className="mb-12">
+        <header className="relative mb-12">
+          {/* Wide screens: beside the article in the left margin, lined up with
+              the date. Narrower screens have no margin, so it sits above. */}
+          <div className="mb-6 xl:absolute xl:top-0 xl:right-full xl:mb-0 xl:-mt-3.5 xl:mr-12">
+            <BackToProjectsButton
+              href={localePath(lang, "/")}
+              label={t.project.back}
+            />
+          </div>
           <time className="text-sm text-subtle" dateTime={project.date}>
             {dateFormatter.format(new Date(project.date))}
           </time>
@@ -102,6 +143,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted text-pretty">
             {project.description}
           </p>
+          {!project.translated && t.project.untranslated ? (
+            <p className="mt-6 inline-flex rounded-full border border-border px-4 py-2 font-mono text-xs text-subtle">
+              {t.project.untranslated}
+            </p>
+          ) : null}
           {hero && heroUsesCover ? (
             <ViewTransition
               default="none"
@@ -127,7 +173,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             />
           ) : null}
         </header>
-        <div className="text-[1.0625rem] leading-8 text-muted">
+        <div
+          className="text-[1.0625rem] leading-8 text-muted"
+          lang={project.translated ? undefined : "en"}
+        >
           <ReactMarkdown
             components={{
               a: ({ children, ...props }) => (
